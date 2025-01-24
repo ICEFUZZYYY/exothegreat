@@ -1,5 +1,5 @@
+import { config } from './config.js';
 const WebSocket = require("ws");
-const config = require("./config.js");
 
 function initializeWebSocket() {
     const ws = new WebSocket("wss://eventsub.wss.twitch.tv/ws");
