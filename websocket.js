@@ -1,5 +1,5 @@
 const WebSocket = require("ws");
-const config = require("./config.js"); // Stellen Sie sicher, dass config.js die richtige User-ID enthält
+const config = require("./config.js");
 
 function initializeWebSocket() {
     const ws = new WebSocket("wss://eventsub.wss.twitch.tv/ws");
@@ -64,4 +64,5 @@ function initializeWebSocket() {
 }
 
 // WebSocket initialisieren
+console.log("Twitch User ID:", config.TWITCH_USER_ID);
 initializeWebSocket(); 
