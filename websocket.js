@@ -1,5 +1,5 @@
+import WebSocket from 'ws';
 import { config } from './config.js';
-const WebSocket = require("ws");
 
 function initializeWebSocket() {
     const ws = new WebSocket("wss://eventsub.wss.twitch.tv/ws");
@@ -14,9 +14,7 @@ function initializeWebSocket() {
 
         if (message.metadata.message_type === "session_welcome") {
             console.log("Willkommen bei Twitch EventSub!");
-            
             const sessionId = message.payload.session.id;
-            console.log("Session-ID:", sessionId);
 
             // Abonnieren des Events
             const subscribeMessage = {
@@ -41,11 +39,8 @@ function initializeWebSocket() {
             if (event && event.broadcaster_user_id === config.TWITCH_USER_ID) {
                 console.log(`Neuer Follower: ${event.user_name}`);
                 
-                // Aktualisiere die Webseite
-                const followerElement = document.getElementById("follower-number");
-                if (followerElement) {
-                    followerElement.textContent = parseInt(followerElement.textContent || "0") + 1;
-                }
+                // Senden Sie eine Nachricht an den Client
+                clientSocket.send(JSON.stringify({ type: "new_follower", user_name: event.user_name }));
             }
         } else if (message.metadata.message_type === "session_keepalive") {
             console.log("Keepalive erhalten.");
