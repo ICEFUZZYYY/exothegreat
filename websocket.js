@@ -36,14 +36,14 @@ function initializeWebSocket() {
             console.log("Event erfolgreich abonniert:", message.payload);
         } else if (message.metadata.message_type === "notification") {
             const event = message.payload.event;
-            console.log("Neue Benachrichtigung:", event);
-
-            if (event.event_type === "channel.follow") {
+            if (event && event.broadcaster_user_id === config.TWITCH_USER_ID) {
+                console.log(`Neuer Follower: ${event.user_name}`);
+                
+                // Aktualisiere die Webseite
                 const followerElement = document.getElementById("follower-number");
                 if (followerElement) {
                     followerElement.textContent = parseInt(followerElement.textContent || "0") + 1;
                 }
-                console.log(`Neuer Follower: ${event.user_name}`);
             }
         } else if (message.metadata.message_type === "session_keepalive") {
             console.log("Keepalive erhalten.");
