@@ -19,19 +19,22 @@ async function fetchFollowerCount() {
         const response = await fetch(`https://api.twitch.tv/helix/users/follows?to_id=${config.TWITCH_USER_ID}`, {
             headers: {
                 "Authorization": `Bearer ${config.TWITCH_ACCESS_TOKEN}`,
-                "Client-ID": config.TWITCH_CLIENT_ID,
-                "Accept": "application/json"
+                "Client-ID": config.TWITCH_CLIENT_ID
             }
         });
 
+        if (response.status === 410) {
+            throw new Error("Access Token oder Anfrage ungültig. Bitte aktualisiere dein Token.");
+        }
+
         if (!response.ok) {
-            throw new Error(`HTTP-Error: ${response.status}`);
+            throw new Error(`API-Fehler: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
         return data.total;
     } catch (error) {
-        console.error("Fehler beim Abrufen der Followeranzahl:", error);
+        console.error("Fehler bei der API-Anfrage:", error);
         return null;
     }
 }
