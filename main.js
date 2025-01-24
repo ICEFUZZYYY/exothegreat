@@ -78,4 +78,23 @@ try {
     document.getElementById("follower-number").textContent = "Config Error";
     document.getElementById("status").textContent = error.message;
     document.getElementById("status").classList.add("error");
-} 
+}
+
+const clientSocket = new WebSocket("ws://localhost:8080");
+
+clientSocket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === "new_follower") {
+        const followerElement = document.getElementById("follower-number");
+        const statusElement = document.getElementById("status");
+
+        if (followerElement) {
+            const currentCount = parseInt(followerElement.textContent) || 0;
+            followerElement.textContent = currentCount + 1;
+        }
+
+        if (statusElement) {
+            statusElement.textContent = `Neuer Follower: ${data.user_name}`;
+        }
+    }
+}; 
