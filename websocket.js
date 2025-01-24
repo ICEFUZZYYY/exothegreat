@@ -1,4 +1,4 @@
-import WebSocket from "ws";
+import WebSocket, { WebSocketServer } from "ws";
 import fs from "fs";
 import https from "https";
 import config from "./config.js";
@@ -10,7 +10,7 @@ const server = https.createServer({
 });
 
 // Lokalen WebSocket-Server für die Webseite starten
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocketServer({ server });
 console.log("WebSocket-Server läuft auf https://localhost:8080");
 
 wss.on("connection", (socket) => {
