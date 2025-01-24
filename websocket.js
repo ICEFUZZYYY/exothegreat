@@ -1,9 +1,17 @@
-import WebSocket, { WebSocketServer } from 'ws';
-import config from './config.js';
+import WebSocket from "ws";
+import fs from "fs";
+import https from "https";
+import config from "./config.js";
 
-// Lokalen WebSocket-Server für den Client starten
-const wss = new WebSocketServer({ port: 8080 });
-console.log("WebSocket-Server läuft auf ws://localhost:8080");
+// SSL/TLS-Zertifikate laden
+const server = https.createServer({
+    key: fs.readFileSync("key.pem"),
+    cert: fs.readFileSync("cert.pem"),
+});
+
+// Lokalen WebSocket-Server für die Webseite starten
+const wss = new WebSocket.Server({ server });
+console.log("WebSocket-Server läuft auf https://localhost:8080");
 
 wss.on("connection", (socket) => {
     console.log("Neuer Client verbunden.");
@@ -30,6 +38,7 @@ function initializeWebSocket() {
             console.log("Willkommen bei Twitch EventSub!");
             sessionId = message.payload.session.id;
 
+            // Twitch-Abonnement senden
             if (sessionId) {
                 const subscribeMessage = {
                     type: "SUBSCRIBE",
@@ -51,7 +60,7 @@ function initializeWebSocket() {
             const event = message.payload.event;
             if (event && event.broadcaster_user_id === config.TWITCH_USER_ID) {
                 console.log(`Neuer Follower: ${event.user_name}`);
-                
+
                 // Nachricht an alle verbundenen Clients senden
                 wss.clients.forEach((client) => {
                     if (client.readyState === WebSocket.OPEN) {
@@ -65,7 +74,7 @@ function initializeWebSocket() {
     ws.on("close", (code, reason) => {
         console.log(`WebSocket-Verbindung geschlossen. Code: ${code}, Grund: ${reason}`);
         console.log("Versuche erneut zu verbinden...");
-        sessionId = null; // Reset sessionId on close
+        sessionId = null; // Session-ID zurücksetzen
         setTimeout(initializeWebSocket, 10000); // 10 Sekunden warten
     });
 
@@ -74,4 +83,10 @@ function initializeWebSocket() {
     });
 }
 
-initializeWebSocket(); 
+// Twitch WebSocket starten
+initializeWebSocket();
+
+// HTTPS-Server starten
+server.listen(8080, () => {
+    console.log("WSS-Server läuft auf https://localhost:8080");
+});
