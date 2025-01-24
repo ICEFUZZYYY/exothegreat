@@ -1,5 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { config } from './config.js';
+import config from './config.js';
 
 // Lokalen WebSocket-Server für den Client starten
 const wss = new WebSocketServer({ port: 8080 });
@@ -13,6 +13,8 @@ wss.on("connection", (socket) => {
 });
 
 // Twitch WebSocket initialisieren
+let sessionId = null;
+
 function initializeWebSocket() {
     const ws = new WebSocket("wss://eventsub.wss.twitch.tv/ws");
 
@@ -26,22 +28,25 @@ function initializeWebSocket() {
 
         if (message.metadata.message_type === "session_welcome") {
             console.log("Willkommen bei Twitch EventSub!");
-            const sessionId = message.payload.session.id;
+            sessionId = message.payload.session.id;
 
-            // Event abonnieren
-            const subscribeMessage = {
-                type: "SUBSCRIBE",
-                data: {
-                    session_id: sessionId,
-                    event_type: "channel.follow",
-                    condition: {
-                        broadcaster_user_id: config.TWITCH_USER_ID,
+            if (sessionId) {
+                const subscribeMessage = {
+                    type: "SUBSCRIBE",
+                    data: {
+                        session_id: sessionId,
+                        event_type: "channel.follow",
+                        condition: {
+                            broadcaster_user_id: config.TWITCH_USER_ID,
+                        },
                     },
-                },
-            };
+                };
 
-            ws.send(JSON.stringify(subscribeMessage));
-            console.log("Abonnement für 'channel.follow' gesendet.");
+                ws.send(JSON.stringify(subscribeMessage));
+                console.log("Abonnement für 'channel.follow' gesendet.");
+            }
+        } else if (message.metadata.message_type === "session_subscribed") {
+            console.log("Event erfolgreich abonniert:", message.payload);
         } else if (message.metadata.message_type === "notification") {
             const event = message.payload.event;
             if (event && event.broadcaster_user_id === config.TWITCH_USER_ID) {
@@ -60,7 +65,8 @@ function initializeWebSocket() {
     ws.on("close", (code, reason) => {
         console.log(`WebSocket-Verbindung geschlossen. Code: ${code}, Grund: ${reason}`);
         console.log("Versuche erneut zu verbinden...");
-        setTimeout(initializeWebSocket, 5000);
+        sessionId = null; // Reset sessionId on close
+        setTimeout(initializeWebSocket, 10000); // 10 Sekunden warten
     });
 
     ws.on("error", (err) => {

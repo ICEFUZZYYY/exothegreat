@@ -81,21 +81,28 @@ try {
     document.getElementById("status").classList.add("error");
 }
 
-const clientSocket = new WebSocket("ws://localhost:8080");
+const clientSocket = new WebSocket("ws://172.24.32.1:8080");
+
+clientSocket.onopen = () => {
+    console.log("WebSocket verbunden.");
+};
 
 clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+    console.log("Nachricht vom Server:", data);
+
     if (data.type === "new_follower") {
         const followerElement = document.getElementById("follower-number");
-        const statusElement = document.getElementById("status");
-
         if (followerElement) {
-            const currentCount = parseInt(followerElement.textContent) || 0;
-            followerElement.textContent = currentCount + 1;
-        }
-
-        if (statusElement) {
-            statusElement.textContent = `Neuer Follower: ${data.user_name}`;
+            followerElement.textContent = `Neuer Follower: ${data.user_name}`;
         }
     }
+};
+
+clientSocket.onerror = (error) => {
+    console.error("WebSocket-Fehler:", error);
+};
+
+clientSocket.onclose = () => {
+    console.log("WebSocket-Verbindung geschlossen.");
 }; 
