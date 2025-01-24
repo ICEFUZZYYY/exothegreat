@@ -7,21 +7,6 @@ const ws = new WebSocket("wss://eventsub.wss.twitch.tv/ws");
 // WebSocket-Ereignisse
 ws.on("open", () => {
     console.log("WebSocket verbunden mit Twitch EventSub!");
-
-    // Event abonnieren
-    ws.send(
-        JSON.stringify({
-            type: "SUBSCRIBE",
-            data: {
-                session_id: "AgoQtQdttmASS4Cjk8mMd7BQFRIGY2VsbC1j", // Ersetzen Sie dies durch die tatsächliche Session-ID
-                event_type: "channel.follow",
-                condition: {
-                    broadcaster_user_id: config.TWITCH_USER_ID, // Ihre Twitch-User-ID
-                },
-            },
-        })
-    );
-    console.log("Abonnement für 'channel.follow' gesendet.");
 });
 
 ws.on("message", (data) => {
@@ -30,15 +15,37 @@ ws.on("message", (data) => {
 
     if (message.metadata.message_type === "session_welcome") {
         console.log("Willkommen bei Twitch EventSub!");
-        // Hier können Sie die Session-ID speichern und das Abonnement senden
+        
+        const sessionId = message.payload.session.id;
+        console.log("Session-ID:", sessionId);
+
+        // Event abonnieren
+        ws.send(
+            JSON.stringify({
+                type: "SUBSCRIBE",
+                data: {
+                    session_id: sessionId,
+                    event_type: "channel.follow",
+                    condition: {
+                        broadcaster_user_id: config.TWITCH_USER_ID, // Ihre Twitch-User-ID
+                    },
+                },
+            })
+        );
+        console.log("Abonnement für 'channel.follow' gesendet.");
     } else if (message.metadata.message_type === "session_subscribed") {
         console.log("Event erfolgreich abonniert:", message.payload);
-    } else if (message.metadata.message_type === "notification" && message.payload.event.event_type === "channel.follow") {
-        const followerElement = document.getElementById("follower-number");
-        if (followerElement) {
-            followerElement.textContent = parseInt(followerElement.textContent || "0") + 1;
+    } else if (message.metadata.message_type === "notification") {
+        const event = message.payload.event;
+        console.log("Neue Benachrichtigung:", event);
+
+        if (event.event_type === "channel.follow") {
+            const followerElement = document.getElementById("follower-number");
+            if (followerElement) {
+                followerElement.textContent = parseInt(followerElement.textContent || "0") + 1;
+            }
+            console.log(`Neuer Follower: ${event.user_name}`);
         }
-        console.log(`Neuer Follower: ${message.payload.event.user_name}`);
     }
 });
 
