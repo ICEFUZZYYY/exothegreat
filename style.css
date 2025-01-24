@@ -167,6 +167,46 @@ nav {
     }
 }
 
+/* Follower Stats Section */
+.follower-stats {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    margin-top: -50px;
+}
+
+.follower-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: rgba(57, 46, 92, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(146, 70, 255, 0.2),
+                inset 0 0 20px rgba(146, 70, 255, 0.1);
+}
+
+#follower-number {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(146, 70, 255, 0.5);
+    margin: 1rem 0;
+    font-family: 'KickerTrial', sans-serif;
+}
+
+.status {
+    font-size: 0.9rem;
+    color: #adadb8;
+    margin-top: 0.5rem;
+}
+
+.error {
+    color: #ff4747;
+}
+
 /* Center all sections content */
 section {
     padding: 5rem 2rem;
