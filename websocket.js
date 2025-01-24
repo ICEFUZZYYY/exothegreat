@@ -18,19 +18,21 @@ function initializeWebSocket() {
             const sessionId = message.payload.session.id;
             console.log("Session-ID:", sessionId);
 
-            // Event abonnieren
-            ws.send(
-                JSON.stringify({
-                    type: "SUBSCRIBE",
-                    data: {
-                        session_id: sessionId,
-                        event_type: "channel.follow",
-                        condition: {
-                            broadcaster_user_id: config.TWITCH_USER_ID,
-                        },
+            // Abonnieren des Events
+            const subscribeMessage = {
+                type: "SUBSCRIBE",
+                data: {
+                    session_id: sessionId,
+                    event_type: "channel.follow",
+                    condition: {
+                        broadcaster_user_id: config.TWITCH_USER_ID,
                     },
-                })
-            );
+                },
+            };
+
+            console.log("Gesendete Nachricht:", subscribeMessage);
+
+            ws.send(JSON.stringify(subscribeMessage));
             console.log("Abonnement für 'channel.follow' gesendet.");
         } else if (message.metadata.message_type === "session_subscribed") {
             console.log("Event erfolgreich abonniert:", message.payload);
@@ -53,7 +55,7 @@ function initializeWebSocket() {
     ws.on("close", (code, reason) => {
         console.log(`WebSocket-Verbindung geschlossen. Code: ${code}, Grund: ${reason}`);
         console.log("Versuche erneut zu verbinden...");
-        setTimeout(initializeWebSocket, 5000); // Nach 5 Sekunden erneut verbinden
+        setTimeout(initializeWebSocket, 5000); // 5 Sekunden Verzögerung
     });
 
     ws.on("error", (err) => {
