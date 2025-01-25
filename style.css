@@ -1,10 +1,10 @@
 :root {
-    --primary-color: #0e0e10;      /* Dunkler Hintergrund */
-    --secondary-color: #392e5c;    /* Dunkles Lila */
-    --accent-color: #9146ff;       /* Twitch Lila */
+    --primary-color: #000000;      /* Dunkler Hintergrund */
+    --secondary-color: #48037A;    /* Dunkles Lila */
+    --accent-color: #48037A;       /* Twitch Lila */
     --text-color: #ffffff;         /* Weiß */
-    --background-color: #0e0e10;   /* Dunkler Hintergrund */
-    --glow-color: #9146ff;         /* Twitch Lila für Glow */
+    --background-color: #000000;   /* Dunkler Hintergrund */
+    --glow-color: #8306c9;         /* Twitch Lila für Glow */
 }
 
 * {
@@ -34,13 +34,13 @@ nav {
 }
 
 .nav-links {
-    background: rgba(20, 20, 25, 0.9);
+    background: rgba(255, 255, 255, 0.037);
     backdrop-filter: blur(10px);
     padding: 1.2rem 3rem;
     border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 20px rgba(146, 70, 255, 0.2),
-                inset 0 0 20px rgba(146, 70, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0);
+    box-shadow: 0 0 20px rgba(106, 0, 255, 0.317),
+                inset 0 0 20px rgba(106, 0, 255, 0.174);
     transition: all 0.3s ease;
 }
 
@@ -110,16 +110,6 @@ nav {
     align-items: center;
 }
 
-.profile-image {
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid var(--accent-color);
-    box-shadow: 0 0 20px rgba(146, 70, 255, 0.3);
-    position: relative;
-}
-
 .profile-image::after {
     content: '';
     position: absolute;
@@ -132,9 +122,9 @@ nav {
 }
 
 .profile-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 500px;
+    height: auto;
+    border-radius: 0;
 }
 
 .glow {
@@ -167,46 +157,6 @@ nav {
     }
 }
 
-/* Follower Stats Section */
-.follower-stats {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding: 2rem;
-    margin-top: -50px;
-}
-
-.follower-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: rgba(57, 46, 92, 0.9);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 20px rgba(146, 70, 255, 0.2),
-                inset 0 0 20px rgba(146, 70, 255, 0.1);
-}
-
-#follower-number {
-    font-size: 3.5rem;
-    font-weight: bold;
-    color: var(--accent-color);
-    text-shadow: 0 0 10px rgba(146, 70, 255, 0.5);
-    margin: 1rem 0;
-    font-family: 'KickerTrial', sans-serif;
-}
-
-.status {
-    font-size: 0.9rem;
-    color: #adadb8;
-    margin-top: 0.5rem;
-}
-
-.error {
-    color: #ff4747;
-}
-
 /* Center all sections content */
 section {
     padding: 5rem 2rem;
@@ -227,6 +177,13 @@ section {
     align-items: center;
     gap: 1rem;
     margin-top: 2rem;
+}
+
+.game-focus img {
+    width: 600px; /* Setze die Breite auf eine kleinere Größe */
+    height: auto; /* Behalte das Seitenverhältnis bei */
+    display: block; /* Optional: um sicherzustellen, dass es zentriert wird */
+    margin: 0 auto; /* Zentriere das Bild horizontal */
 }
 
 /* Social Media Grid */
@@ -427,15 +384,21 @@ canvas {
 }
 
 .jobs {
-    background-color: #f4f4f4;
+    background-color: var(--secondary-color);
     padding: 40px 20px;
+    -bottom: -200px;
     text-align: center;
+    color: var(--text-color);
+    box-shadow: 0 0 20px rgba(60, 0, 255, 0.3);
+    border-radius: 10px;
+    transition: all 0.3s ease;
 }
 
 .jobs h2 {
     font-family: 'KickerTrial', sans-serif;
     font-size: 2.5em;
     margin-bottom: 20px;
+    color: var(--accent-color);
 }
 
 .jobs p {
@@ -447,13 +410,16 @@ canvas {
     display: inline-block;
     margin: 10px;
     padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
+    background-color: var(--accent-color);
+    color: var(--text-color);
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s;
+    box-shadow: 0 0 20px rgba(144, 70, 255, 0.121);
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
 }
 
 .jobs a:hover {
-    background-color: #0056b3;
+    background-color: #7b3bd4;
+    box-shadow: 0 0 30px rgba(145, 70, 255, 0.5);
+    transform: translateY(-3px);
 } 

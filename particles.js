@@ -5,7 +5,7 @@ let particles = [];
 let mouse = {
     x: undefined,
     y: undefined,
-    radius: 100
+    radius: 400
 };
 
 // Canvas Größe
@@ -26,8 +26,8 @@ class Particle {
         this.x = x || Math.random() * canvas.width;
         this.y = y || Math.random() * canvas.height;
         this.size = Math.random() * 1.5 + 0.5;
-        this.speedX = Math.random() * 0.5 - 0.25;
-        this.speedY = Math.random() * 0.5 - 0.25;
+        this.speedX = Math.random() * 0.2 - 0.1;
+        this.speedY = Math.random() * 0.2 - 0.1;
         this.angle = Math.random() * 360;
         this.sparkleSpeed = 0.02 + Math.random() * 0.02;
         
@@ -39,29 +39,26 @@ class Particle {
         this.baseY = this.y;
         this.density = Math.random() * 30 + 1;
         this.clusterRadius = Math.random() * 30 + 10;
+        this.isGlowing = false;
     }
 
     getRandomColor() {
         const colors = [
-            `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.3})`,  // Weiß
-            `rgba(145, 70, 255, ${Math.random() * 0.5 + 0.3})`,   // Lila
-            `rgba(200, 180, 255, ${Math.random() * 0.5 + 0.3})`,  // Helllila
-            `rgba(70, 140, 255, ${Math.random() * 0.5 + 0.3})`    // Blau
+            `rgba(131, 6, 201, ${Math.random() * 0.5 + 0.3})`,  // Weiß
+            `rgba(12, 0, 42, ${Math.random() * 0.5 + 0.3})`,   // Lila
+            `rgba(71, 5, 125, ${Math.random() * 0.5 + 0.3})`,  // Helllila
+            `rgba(112, 10, 129, ${Math.random() * 0.5 + 0.3})`    // Blau
         ];
         return colors[Math.floor(Math.random() * colors.length)];
     }
 
     update() {
-        // Cluster-Bewegung
         let angle = this.angle;
         this.x = this.baseX + Math.cos(angle) * this.clusterRadius;
         this.y = this.baseY + Math.sin(angle) * this.clusterRadius;
-        
-        // Basis-Position langsam bewegen
         this.baseX += this.speedX;
         this.baseY += this.speedY;
 
-        // Bildschirmgrenzen prüfen
         if (this.baseX < 0 || this.baseX > canvas.width) {
             this.speedX *= -1;
         }
@@ -69,7 +66,6 @@ class Particle {
             this.speedY *= -1;
         }
 
-        // Maus-Interaktion
         if (mouse.x !== undefined) {
             let dx = mouse.x - this.x;
             let dy = mouse.y - this.y;
@@ -77,8 +73,9 @@ class Particle {
             
             if (distance < mouse.radius) {
                 let angle = Math.atan2(dy, dx);
-                this.x -= Math.cos(angle) * 2;
-                this.y -= Math.sin(angle) * 2;
+                let force = (mouse.radius - distance) / mouse.radius; // Calculate force based on distance
+                this.x -= Math.cos(angle) * force * 2; // Apply force away from mouse
+                this.y -= Math.sin(angle) * force * 2;
             }
         }
 
@@ -108,7 +105,7 @@ function init() {
     particles = [];
     
     // Basis-Partikel
-    let numberOfParticles = (canvas.width * canvas.height) / 4000; // Mehr Basis-Partikel
+    let numberOfParticles = (canvas.width * canvas.height) / 1000; // Mehr Basis-Partikel
     
     // Zufällige Partikel
     for (let i = 0; i < numberOfParticles; i++) {
@@ -149,7 +146,7 @@ function connectParticles() {
 
             if (distance < 50) {  // Kürzere Verbindungslinien für dichtere Cluster
                 ctx.beginPath();
-                ctx.strokeStyle = `rgba(74, 139, 140, ${0.15 * (1 - distance/50)})`;
+                ctx.strokeStyle = `rgba(50, 1, 117, ${0.5 * (1 - distance/50)})`;
                 ctx.lineWidth = 0.3;
                 ctx.moveTo(particles[i].x, particles[i].y);
                 ctx.lineTo(particles[j].x, particles[j].y);
